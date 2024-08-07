@@ -1,0 +1,95 @@
+﻿@using Student_Management_System.Helpers
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "All Student";
+}
+<h3>@ViewData["Title"]</h3>
+
+@model PaginatedList<Student_Management_System.Models.Entities.Student>
+
+@if (Model != null && Model.Any())
+{
+    <form method="get" asp-action="List" asp-controller="Students">
+        <div class="form-group">
+            <label for="From">Joining Date From:</label>
+            <input type="date" id="From" name="From" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="To">Joining Date To:</label>
+            <input type="date" id="To" name="To" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    <div class="print-content" style="min-height:450px" >
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Joining Date</th>
+                <th>Date of Birth</th>
+                <th>Tuition Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td><a asp-controller="students" asp-action="Detail" asp-route-id="@student.StudentId"> @student.StudentId  </a> </td>
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    <td>@student.JoiningDate.ToString("yyyy-MM-dd")</td>
+                    <td>@student.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                    <td>@student.TuitionFee</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+
+    <div>
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        }
+
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-default @prevDisabled">
+            Previous
+        </a>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-default @nextDisabled">
+            Next
+        </a>
+    </div>
+
+    <button class="btn btn-primary" onclick="printTable()">Print</button>
+}
+else
+{
+    <p>No students found.</p>
+}
+<script>
+    function printTable() {
+        var printContent = document.querySelector('.print-content');
+        var originalBodyContent = document.body.innerHTML;
+
+        document.body.innerHTML = printContent.outerHTML;
+
+        window.print();
+
+        document.body.innerHTML = originalBodyContent;
+    }
+</script>
+
+

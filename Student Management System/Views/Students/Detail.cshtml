@@ -1,0 +1,91 @@
+﻿@model Student_Management_System.Models.Entities.Student
+
+@{
+    ViewData["Title"] = "Student Information";
+}
+<h3>@ViewData["Title"]</h3>
+
+@if (Model == null)
+{
+<p>No student found</p>
+}
+else
+{
+<div class="print-content">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Student ID</td>
+                <td>@Model.StudentId</td>
+            </tr>
+            <tr>
+                <td>First Name</td>
+                <td>@Model.FirstName</td>
+            </tr>
+            <tr>
+                <td>Last Name</td>
+                <td>@Model.LastName</td>
+            </tr>
+            <tr>
+                <td>Phone</td>
+                <td>@Model.Phone</td>
+            </tr>
+            <tr>
+                <td>Father's Name</td>
+                <td>@Model.FatherName</td>
+            </tr>
+             <tr>
+                 <td>Mother's Name</td>
+                  <td>@Model.MotherName</td>
+             </tr>
+            <tr>
+                <td>Joining Date</td>
+                <td>@Model.JoiningDate.ToString("dd/MM/yyyy")</td>
+            </tr>
+            <tr>
+                <td>Date of Birth</td>
+                <td>@Model.DateOfBirth.ToString("dd/MM/yyyy")</td>
+            </tr>
+            <tr>
+                <td>Tuition Fee</td>
+                <td>@Model.TuitionFee.ToString("C")</td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td>@Model.Address</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<button class="btn btn-primary" onclick="location.href='@Url.Action("Edit", "Students", new { id = Model.StudentId })'">Edit</button>
+<button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+<button class="btn btn-primary" onclick="printTable()">Print</button>
+
+<script>
+        function printTable() {
+            var printContent = document.querySelector('.print-content');
+            var originalBodyContent = document.body.innerHTML;
+
+            document.body.innerHTML = printContent.outerHTML;
+
+            window.print();
+
+            document.body.innerHTML = originalBodyContent;
+        }
+
+        function confirmDelete() {
+            var confirmed = confirm("Are you sure you want to delete?");
+            if (confirmed) {
+                // Use AJAX or navigate to the delete action here
+                window.location.href = '@Url.Action("Delete", "Students", new { id = Model.StudentId })';
+            }
+        }
+</script>
+}
