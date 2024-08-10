@@ -50,7 +50,16 @@ else
             </tr>
             <tr>
                 <td>Date of Birth</td>
-                <td>@Model.DateOfBirth.ToString("dd/MM/yyyy")</td>
+                <td>
+                        @if (Model.DateOfBirth.HasValue)
+                        {
+                            @Model.DateOfBirth.Value.ToString("dd/MM/yyyy")
+                        }
+                        else
+                        {
+                            @:N/A
+                        }
+                </td>
             </tr>
             <tr>
                 <td>Tuition Fee</td>

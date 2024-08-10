@@ -19,11 +19,23 @@ namespace Student_Management_System.Controllers
         [HttpGet]
         public IActionResult Add()
         {
+            UserViewModel user = HttpContext.Session.GetObject<UserViewModel>("currentUser");
+            if (user == null)
+            {
+               
+                return Unauthorized();
+            }
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Add( StudentViewModel viewModel)
         {
+            UserViewModel user = HttpContext.Session.GetObject<UserViewModel>("currentUser");
+            if (user == null)
+            {
+               
+                return Unauthorized(); 
+            }
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
@@ -48,12 +60,26 @@ namespace Student_Management_System.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
+            UserViewModel user = HttpContext.Session.GetObject<UserViewModel>("currentUser");
+            if (user == null)
+            {
+                // Handle the case where user is not found in session
+                return Unauthorized(); // or another appropriate result
+            }
             var student = await bdContext.Students.FindAsync(id);
             return View(student);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Student viewModel)
         {
+            UserViewModel user = HttpContext.Session.GetObject<UserViewModel>("currentUser");
+            if (user == null)
+            {
+                // Handle the case where user is not found in session
+                return Unauthorized(); // or another appropriate result
+            }
+
             var student = await bdContext.Students.FindAsync(viewModel.StudentId);
             if (student is not null)
             {
@@ -75,26 +101,54 @@ namespace Student_Management_System.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> list(int? pageNumber , DateTime? from, DateTime? to)
+        public async Task<IActionResult> list(int? pageNumber, DateTime? from, DateTime? to)
         {
-
-            var students = bdContext.Students.AsNoTracking();
-
-            if (from.HasValue)
+            UserViewModel user = HttpContext.Session.GetObject<UserViewModel>("currentUser");
+            if (user == null)
             {
-                students = students.Where(s => s.JoiningDate >= from.Value);
+                // Handle the case where user is not found in session
+                return Unauthorized(); // or another appropriate result
             }
-
-            if (to.HasValue)
+            if (user.UserType == "Admin")
             {
-                students = students.Where(s => s.JoiningDate <= to.Value);
+                var students = bdContext.Students.AsNoTracking();
+
+                if (from.HasValue)
+                {
+                    students = students.Where(s => s.JoiningDate >= from.Value);
+                }
+
+                if (to.HasValue)
+                {
+                    students = students.Where(s => s.JoiningDate <= to.Value);
+                }
+                int pageSize = 10;
+                return View(await PaginatedList<Student>.CreateAsync(students, pageNumber ?? 1, pageSize));
             }
-            int pageSize = 10;
-            return View(await PaginatedList<Student>.CreateAsync(students, pageNumber ?? 1, pageSize));
+            else
+            {
+                var student = await bdContext.Students
+                .Where(s => s.UserId == user.Id)
+                .FirstOrDefaultAsync();
+                if(student is not null)
+                {
+                    var id = student.StudentId;
+                    return RedirectToAction("Detail", new { id });
+
+                }
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred.");
+
 
         }
         [HttpGet]
         public async Task<IActionResult> Detail([FromRoute] int id) {
+            UserViewModel user = HttpContext.Session.GetObject<UserViewModel>("currentUser");
+            if (user == null)
+            {
+
+                return Unauthorized();
+            }
 
             var student = await bdContext.Students.FindAsync(id);
             return View(student);
@@ -103,6 +157,12 @@ namespace Student_Management_System.Controllers
 
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            UserViewModel user = HttpContext.Session.GetObject<UserViewModel>("currentUser");
+            if (user == null)
+            {
+
+                return Unauthorized();
+            }
             var student = await bdContext.Students
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.StudentId == id);

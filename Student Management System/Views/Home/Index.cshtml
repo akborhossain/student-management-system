@@ -1,9 +1,40 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿
+
+@model Student_Management_System.Models.UserViewModel
+
+@{
+    ViewData["Title"] = "Login";
 }
 
+<h2>Login</h2>
 
-<div class="text-center" style="min-height:450px">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<form asp-action="Index" method="post">
+    <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Login</button>
+</form>
+
+
+<div class="mt-2">
+    <a asp-action="Create">Registration</a>
 </div>
+<div class="mt-2">
+    <a asp-action="CreateAdmin">Create Admin</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

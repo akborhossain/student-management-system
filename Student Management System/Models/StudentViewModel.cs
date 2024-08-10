@@ -30,7 +30,7 @@ namespace Student_Management_System.Models
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime ? DateOfBirth { get; set; }
 
         [Required]
         public decimal TuitionFee { get; set; }

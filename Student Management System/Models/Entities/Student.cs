@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Student_Management_System.Models.Entities
 {
@@ -26,20 +27,25 @@ namespace Student_Management_System.Models.Entities
         [Phone]
         public string Phone { get; set; }
 
-
         [Required]
         [DataType(DataType.Date)]
         public DateTime JoiningDate { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         [Required]
         public decimal TuitionFee { get; set; }
 
-
         [Required]
         public string Address { get; set; }
+
+        // Foreign key property
+        public int UserId { get; set; }
+
+        // Navigation properties
+        public User User { get; set; }
+        public ICollection<Registration> Registrations { get; set; }
     }
 }

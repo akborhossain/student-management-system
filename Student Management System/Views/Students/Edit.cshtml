@@ -3,6 +3,7 @@
 *@
 @{
     ViewData["Title"] = "Edit Student";
+    var user = Context.Session.GetObject<UserViewModel>("currentUser") ?? new UserViewModel();
 }
 <h3>@ViewData["Title"]</h3>
 
@@ -49,7 +50,7 @@ else
         </div>
         <div class="form-group">
             <label asp-for="JoiningDate" class="control-label"></label>
-            <input asp-for="JoiningDate" type="date" class="form-control" />
+            <input asp-for="JoiningDate" type="date" class="form-control" readonly />
             <span asp-validation-for="JoiningDate" class="text-danger"></span>
         </div>
         <div class="form-group">
@@ -59,7 +60,15 @@ else
         </div>
         <div class="form-group">
             <label asp-for="TuitionFee" class="control-label"></label>
-            <input asp-for="TuitionFee" class="form-control" />
+            @if (user.UserType == "Student")
+            {
+                <input asp-for="TuitionFee" class="form-control" readonly />
+            }
+            else
+            {
+                <input asp-for="TuitionFee" class="form-control" readonly />
+            }
+
             <span asp-validation-for="TuitionFee" class="text-danger"></span>
         </div>
         <div class="form-group">

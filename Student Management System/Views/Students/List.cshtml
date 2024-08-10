@@ -43,7 +43,16 @@
                     <td>@student.FirstName</td>
                     <td>@student.LastName</td>
                     <td>@student.JoiningDate.ToString("yyyy-MM-dd")</td>
-                    <td>@student.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (student.DateOfBirth.HasValue)
+                            {
+                                @student.DateOfBirth.Value.ToString("dd/MM/yyyy")
+                            }
+                            else
+                            {
+                                @:N/A
+                            }
+                        </td>
                     <td>@student.TuitionFee</td>
                 </tr>
             }
